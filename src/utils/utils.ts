@@ -133,3 +133,10 @@ export function createElement<
     }
     return element;
 }
+
+export function customNumberFormat(num: number): string {
+    if (num > 9999) {
+        return num.toLocaleString()
+    }  
+    return num.toString();
+}
