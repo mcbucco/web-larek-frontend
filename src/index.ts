@@ -34,7 +34,7 @@ const success = new Success(cloneTemplate(successTemplate), {onClick: () => moda
 const order = new Order(cloneTemplate(orderTemplate), events);
 const userContacts = new UserContacts(cloneTemplate(userContactsTemplate), events);
 
-events.on('items:changed', () => {
+events.on('catalogModel:items.changed', () => {
   const cards =  appModel.getCatalog().map((item) => {
     const card = new CardCatalogView(cloneTemplate(catalogProductTemplate), {
        onClick: () => events.emit('card:select', item) 
@@ -48,10 +48,11 @@ events.on('card:select', (item: ICard) => {
   appModel.setPreview(item);
 });
 
-events.on('preview:changed', (item: ICard) => {
+events.on('catalogModel:preview.changed', (item: ICard) => {
   const card = new CardFullView(cloneTemplate(cardPreviewTemplate), {
     onClick: () => events.emit('card:ordered', item)
   });
+  card.action = appModel.isOrdered(item);
   modal.render({
     content: card.render(item)
   });
@@ -65,8 +66,18 @@ events.on('card:deleted', (item: ICard) => {
   appModel.toggleOrderedLot(item.id, !appModel.isOrdered(item));
 });
 
-events.on('order:changed', () => {
+events.on('orderModel:items.changed', () => {
   page.counter = appModel.totalItems;
+  page.render();
+  if (appModel.getPreview()) {
+    const card = new CardFullView(cloneTemplate(cardPreviewTemplate), {
+      onClick: () => events.emit('card:deleted', appModel.getPreview())
+    });
+    card.action = appModel.isOrdered(appModel.getPreview());
+    modal.render({
+      content: card.render(appModel.getPreview()),
+    })
+  }
   const orderedItems = appModel.orderedItems.map((id) => {
     const cardInBasket = new CardBasketView(cloneTemplate(cardBasketTemplate), {onClick: () => events.emit('card:deleted', appModel.getItem(id))});
     cardInBasket.index = (appModel.orderedItems.indexOf(id) + 1).toString();
@@ -100,7 +111,7 @@ events.on(/^order\..|^contacts\..*:change/, (data: { field: Partial<keyof TOrder
   appModel.setOrderField(data.field, data.value);
 });
 
-events.on('payment:changed', (data: {value: TPayment}) => {
+events.on('orderModel:payment.changed', (data: {value: TPayment}) => {
   order.payment = data.value;
 })
 
@@ -123,13 +134,15 @@ events.on('contacts:submit', () => {
     total: appModel.total,
   };
   api.placeOrder(orderToSubmit)
-    .then(total => success.total = total)
+    .then(total => {
+      success.total = total
+      modal.render({
+        content: success.render(),
+      });
+      appModel.resetPreview();
+      appModel.clearBasket();
+    })
     .catch((error) => console.error(error));
-  modal.render({
-    content: success.render(),
-  })
-  appModel.clearBasket();
-  appModel.resetOrder();
 });
 
 events.on('formErrors:change', (errors: Partial<TOrderData>) => {

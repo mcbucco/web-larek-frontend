@@ -1,8 +1,9 @@
 import { StringNullableChain } from "lodash";
 import { ICard, TCardBaseView, TCardBasketView, TCardCatalogView } from "../types";
-import { customNumberFormat, ensureElement } from "../utils/utils";
+import { replaceClassName, customNumberFormat, ensureElement } from "../utils/utils";
 import { Component } from "./base/Component";
 import { CDN_URL } from "../utils/constants";
+import { categories } from "../utils/constants";
 
 export interface ICardActions {
   onClick: (event: MouseEvent) => void;
@@ -75,6 +76,7 @@ export class CardCatalogView<T> extends CardBaseView<TCardCatalogView> {
 
   set category(value: string) {
     this.setText(this.cardCategory, value);
+    replaceClassName(this.cardCategory, /card__category_.+/g, `card__category${categories[value]}`);
   }
 
   set image(value: string) {   
@@ -98,5 +100,14 @@ export class CardFullView extends CardCatalogView<ICard> {
 
   set description(value: string) {
     this.setText(this.cardDescription, value);
+  }
+
+  set action(isOrdered: boolean) {
+    if (isOrdered) {
+      this.setText(this.cardButton, 'Удалить');
+    }
+    else {
+      this.setText(this.cardButton, 'В корзину');
+    }
   }
 }

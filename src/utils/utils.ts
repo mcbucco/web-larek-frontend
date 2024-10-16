@@ -140,3 +140,11 @@ export function customNumberFormat(num: number): string {
     }  
     return num.toString();
 }
+
+export function replaceClassName(element: HTMLElement, targetClass: RegExp, newclass: string): void {
+    const oldClasses = Array.from(element.classList).join(', ');
+    const match = oldClasses.match(targetClass).toString();
+    if (match && match !== newclass) {
+        element.classList.replace(match, newclass);
+    }
+}

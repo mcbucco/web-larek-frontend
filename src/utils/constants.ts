@@ -4,3 +4,12 @@ export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 export const settings = {
 
 };
+
+
+type stringMap = Record<string, string>;
+export const categories: stringMap = {
+  'софт-скил': '_soft',
+'другое': '_other',
+'дополнительное': '_additional',
+'кнопка': '_button',
+'хард-скил': '_hard'}

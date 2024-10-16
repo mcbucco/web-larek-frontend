@@ -11,7 +11,7 @@
 - src/pages/index.html — HTML-файл главной страницы
 - src/types/index.ts — файл с типами
 - src/index.ts — точка входа приложения
-- src/styles/styles.scss — корневой файл стилей
+- src/scss/styles.scss — корневой файл стилей
 - src/utils/constants.ts — файл с константами
 - src/utils/utils.ts — файл с утилитами
 
@@ -142,6 +142,8 @@ export type TCardCatalogView = Omit<ICard, 'description'>;
 - `getCatalog()` возвращает массив объектов-товаров;
 - `getItem(id: string)` возвращает объект-товар по переданному в аргументы id;
 - `setPreview(previewItem: ICard)` сохраняет объект-товар, выбранный для просмотра;
+- `getPreview()` возвращает объект `ICard` карточки для просмотра;
+- `resetPreview()` очищает значения поля `preview`;
 - `get orderData()` геттер возвращает значения адреса, email, телефона и способа оплаты;
 - `get total()` геттер, рассчитывающий сумму заказа;
 - `get totalItems()` свойство для хранения количества товаров в заказе;
@@ -149,7 +151,6 @@ export type TCardCatalogView = Omit<ICard, 'description'>;
 - `isOrdered(item: ICard)` метод проверки наличия товара в заказе;
 - `toggleOrderedLot(id: string, isIncluded: boolean)` метод для изменения статуса товара;
 - `clearBasket()` метод очищения корзины;
-- `resetOrder()` метод для сброса значений полей объекта `order`;
 - `setOrderField(field: Partial<keyof TOrderData>, value: string & TPayment)` метод для сохранения введённых в форму заказа данных в свойства класса;
 - `validateOrder()` метод валидации заказа.
 ***
@@ -244,10 +245,11 @@ export type TCardCatalogView = Omit<ICard, 'description'>;
 #### Список событий, генерируемых в приложении
 
 События изменения данных, генерируемые классом модели данных приложения:
-- `items:changed` - изменение каталога в модели данных;
-- `preview:changed` - изменение карточки для просмотра в модели данных;
-- `order:changed` - изменение списка заказанных товаров в модели данных;
-- `payment:changed` - изменение способа оплаты в модели данных.
+- `catalogModel:items.changed` - изменение каталога в модели данных;
+- `catalogModel:preview.changed` - изменение карточки для просмотра в модели данных;
+- `orderModel:items.changed` - изменение списка заказанных товаров в модели данных;
+- `orderModel:payment.changed` - изменение способа оплаты в модели данных;
+- `order:ready` - информирование об отсутствии ошибок при заполнении формы заказа.
 
 События, генерируемые классами представления при взаимодействии с интерфейсом:
 - `card:select` - выбор карточки для просмотра;

@@ -42,7 +42,7 @@ export class AppModel extends Model<IAppModel> {
   
   setCatalog(items: ICard[]) {   
     this.catalogModel.items = items;
-    this.emitChanges('items:changed', items);
+    this.emitChanges('catalogModel:items.changed', items);
   }
   
   getCatalog() {
@@ -55,7 +55,15 @@ export class AppModel extends Model<IAppModel> {
   
   setPreview(previewItem: ICard) {
     this.catalogModel.preview = previewItem.id;
-    this.emitChanges('preview:changed', previewItem);
+    this.emitChanges('catalogModel:preview.changed', previewItem);
+  }
+
+  getPreview() {
+    return this.getItem(this.catalogModel.preview);
+  }
+
+  resetPreview() {
+    this.catalogModel.preview = '';
   }
 
   toggleOrderedLot(id: string, isIncluded: boolean) {
@@ -64,7 +72,7 @@ export class AppModel extends Model<IAppModel> {
     } else {
         this.orderModel.order.items = _.without(this.orderModel.order.items, id);
     }
-    this.events.emit('order:changed', this.orderModel.order.items);
+    this.events.emit('orderModel:items.changed', this.orderModel.order.items);
   }
 
   clearBasket() {
@@ -73,23 +81,10 @@ export class AppModel extends Model<IAppModel> {
     });
   }
 
-  resetOrder() {
-    this.orderModel = {
-      order: {
-        payment: '',
-        address: '',
-        email: '',
-        phone: '',
-        items: [],
-      },
-      formErrors: {},
-    }
-  }
-
   setOrderField(field: Partial<keyof TOrderData>, value: string & TPayment): void {
     this.orderModel.order[field] = value;
     if (field === 'payment') {
-      this.events.emit('payment:changed', { value });
+      this.events.emit('orderModel:payment.changed', { value });
     }
     if (this.validateOrder()) {
       this.events.emit('order:ready', this.orderModel.order);
