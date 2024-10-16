@@ -45,7 +45,7 @@ yarn build
 Интерфейс объекта с данными о товаре:
 ```
 export interface ICard {
-  _id: string;
+  id: string;
   description: string;
   image: string;
   title: string;
@@ -89,8 +89,7 @@ export interface IOrderModel {
 ```
 export interface IAppModel {
   orderModel: IOrderModel;
-  catalogModel: ICatalogModel;
-  total: number;
+  catalogModel: ICatalogModel; 
 }
 ```
 Вспомогательные типы:
@@ -99,7 +98,7 @@ export type TOrderData = IContacts & IPaymentAndShippingInfo;
 
 export type FormErrors = Partial<Record<keyof TOrderData, string>>;
 
-export type TOrderApi = IOrder & Pick<IAppModel, 'total'>;
+export type TOrderApi = IOrder & {'total': number};
 ```
 Интерфейсы семейства классов отображения карточек товара:
 ```

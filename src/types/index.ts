@@ -40,15 +40,14 @@ export interface IOrderModel {
 //Интерфейс модели данных приложения
 export interface IAppModel {
   orderModel: IOrderModel;
-  catalogModel: ICatalogModel;
-  total: number;
+  catalogModel: ICatalogModel; 
 }
 
 export type TOrderData = IContacts & IPaymentAndShippingInfo;
 
 export type FormErrors = Partial<Record<keyof TOrderData, string>>;
 
-export type TOrderApi = IOrder & Pick<IAppModel, 'total'>;
+export type TOrderApi = IOrder & {'total': number};
 
 export type TCardBaseView = Pick<ICard, 'title' | 'price'>;
 

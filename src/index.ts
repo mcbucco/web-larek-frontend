@@ -67,8 +67,7 @@ events.on('card:deleted', (item: ICard) => {
 });
 
 events.on('orderModel:items.changed', () => {
-  page.counter = appModel.totalItems;
-  page.render();
+  page.render({counter: appModel.totalItems});
   if (appModel.getPreview()) {
     const card = new CardFullView(cloneTemplate(cardPreviewTemplate), {
       onClick: () => events.emit('card:deleted', appModel.getPreview())
